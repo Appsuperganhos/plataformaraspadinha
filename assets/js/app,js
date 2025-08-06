@@ -1,0 +1,200 @@
+// Aplicação principal
+class App {
+    constructor() {
+        this.init();
+    }
+
+    // Inicializar aplicação
+    init() {
+        // Aguardar DOM carregar
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                this.start();
+            });
+        } else {
+            this.start();
+        }
+    }
+
+    // Iniciar aplicação
+    start() {
+        console.log('🚀 Iniciando Raspou Ganhou Platform...');
+
+        // Inicializar sistemas
+        this.initSystems();
+        
+        // Configurar interface
+        this.setupUI();
+        
+        // Inicializar roteador
+        Router.init();
+        
+        console.log('✅ Aplicação iniciada com sucesso!');
+    }
+
+    // Inicializar sistemas
+    initSystems() {
+        // Inicializar sistema de modais
+        Modals.init();
+        
+        // Atualizar interface de autenticação
+        Auth.updateAuthUI();
+        
+        // Configurar service worker (se disponível)
+        this.setupServiceWorker();
+        
+        // Configurar tratamento de erros
+        this.setupErrorHandling();
+    }
+
+    // Configurar interface
+    setupUI() {
+        // Configurar tema escuro/claro baseado na preferência do usuário
+        this.setupTheme();
+        
+        // Configurar responsividade
+        this.setupResponsive();
+        
+        // Configurar animações
+        this.setupAnimations();
+    }
+
+    // Configurar service worker
+    setupServiceWorker() {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('Service Worker registrado:', registration);
+                })
+                .catch(error => {
+                    console.log('Erro ao registrar Service Worker:', error);
+                });
+        }
+    }
+
+    // Configurar tratamento de erros
+    setupErrorHandling() {
+        // Capturar erros JavaScript
+        window.addEventListener('error', (event) => {
+            console.error('Erro JavaScript:', event.error);
+            this.handleError(event.error);
+        });
+
+        // Capturar promises rejeitadas
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Promise rejeitada:', event.reason);
+            this.handleError(event.reason);
+        });
+
+        // Capturar erros de rede
+        window.addEventListener('offline', () => {
+            Utils.showNotification('warning', 'Você está offline. Algumas funcionalidades podem não funcionar.');
+        });
+
+        window.addEventListener('online', () => {
+            Utils.showNotification('success', 'Conexão restaurada!');
+        });
+    }
+
+    // Tratar erros
+    handleError(error) {
+        // Em produção, enviar erro para serviço de monitoramento
+        if (process.env.NODE_ENV === 'production') {
+            // Enviar para Sentry, LogRocket, etc.
+        }
+
+        // Mostrar mensagem amigável para o usuário
+        if (error.message && !error.message.includes('Network')) {
+            Utils.showNotification('error', 'Ops! Algo deu errado. Tente novamente.');
+        }
+    }
+
+    // Configurar tema
+    setupTheme() {
+        // Verificar preferência salva
+        const savedTheme = Utils.storage.get('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        const theme = savedTheme || (prefersDark ? 'dark' : 'dark'); // Sempre dark por padrão
+        document.documentElement.setAttribute('data-theme', theme);
+    }
+
+    // Configurar responsividade
+    setupResponsive() {
+        // Ajustar altura da viewport em dispositivos móveis
+        const setVH = () => {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        };
+
+        setVH();
+        window.addEventListener('resize', setVH);
+        window.addEventListener('orientationchange', setVH);
+
+        // Detectar dispositivo móvel
+        const isMobile = Utils.isMobile();
+        document.documentElement.classList.toggle('is-mobile', isMobile);
+    }
+
+    // Configurar animações
+    setupAnimations() {
+        // Intersection Observer para animações de entrada
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observar elementos com classe 'animate-on-scroll'
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Reobservar quando o conteúdo mudar
+        const contentObserver = new MutationObserver(() => {
+            document.querySelectorAll('.animate-on-scroll:not(.fade-in)').forEach(el => {
+                observer.observe(el);
+            });
+        });
+
+        contentObserver.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    }
+
+    // Métodos utilitários
+    static getInstance() {
+        if (!App.instance) {
+            App.instance = new App();
+        }
+        return App.instance;
+    }
+}
+
+// Inicializar aplicação
+const app = App.getInstance();
+
+// Exportar para uso global
+window.App = App;
+window.app = app;
+
+// Debug helpers (apenas em desenvolvimento)
+if (process.env.NODE_ENV === 'development') {
+    window.Auth = Auth;
+    window.API = API;
+    window.Utils = Utils;
+    window.Router = Router;
+    window.Components = Components;
+    window.Modals = Modals;
+    window.Admin = Admin;
+    window.CONFIG = CONFIG;
+}
