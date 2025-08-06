@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raspou Ganhou - Plataforma de Raspadinhas</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/notiflix@3.2.8/dist/notiflix-aio-3.2.8.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header-main" id="header">
+        <div class="header-content-wrapper">
+            <div class="header-left-section">
+                <a href="/" class="header-logo-link">
+                    <img src="https://images.pexels.com/photos/3683107/pexels-photo-3683107.jpeg?auto=compress&cs=tinysrgb&w=200&h=60&fit=crop" 
+                         class="header-logo" alt="Logo">
+                </a>
+                <a href="/" class="header-rasp-link">Raspadinhas</a>
+            </div>
+
+            <div class="header-right-section" id="headerRightSection">
+                <!-- Conteúdo será inserido dinamicamente -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav" id="mobileNav">
+        <a href="/" class="mobile-nav-item">
+            <i class="fa-solid fa-gamepad"></i>
+        </a>
+        <a href="/apostas" class="mobile-nav-item">
+            <i class="fa-solid fa-cart-shopping"></i>
+        </a>
+        <button onclick="openDepositModal()" class="mobile-nav-item mobile-nav-item-highlight">
+            <i class="fa-solid fa-wallet"></i>
+        </button>
+        <a href="/afiliados" class="mobile-nav-item">
+            <i class="fa-solid fa-gift"></i>
+        </a>
+        <a href="/transacoes" class="mobile-nav-item">
+            <i class="fa-solid fa-receipt"></i>
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="mainContent">
+        <!-- Conteúdo será inserido dinamicamente -->
+    </main>
+
+    <!-- Modals -->
+    <div id="modalsContainer"></div>
+
+    <!-- Scripts -->
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/modals.js"></script>
+    <script src="assets/js/components.js"></script>
+    <script src="assets/js/router.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
