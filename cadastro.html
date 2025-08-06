@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Raspou Ganhou</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/notiflix@3.2.8/dist/notiflix-aio-3.2.8.min.js"></script>
+</head>
+<body>
+    <main>
+        <div class="form-container fade-in">
+            <div class="form-header">
+                <img src="https://images.pexels.com/photos/3683107/pexels-photo-3683107.jpeg?auto=compress&cs=tinysrgb&w=150&h=60&fit=crop" 
+                     alt="Logo" class="form-logo">
+                <h2 class="form-title">Crie sua conta gratuita</h2>
+                <p class="form-subtitle">Vamos começar?</p>
+            </div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <div class="input-group">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="registerName" class="form-input" placeholder="Nome completo" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-group">
+                        <i class="fa-solid fa-phone"></i>
+                        <input type="text" id="registerPhone" class="form-input" placeholder="Telefone" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-group">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="registerEmail" class="form-input" placeholder="E-mail" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="registerPassword" class="form-input" placeholder="Senha" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-group">
+                        <i class="fa-solid fa-shield-alt"></i>
+                        <input type="password" id="registerConfirmPassword" class="form-input" placeholder="Confirmar senha" required>
+                    </div>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="acceptTerms" required>
+                    <label for="acceptTerms">
+                        Declaro que tenho mais de 18 anos e aceito os 
+                        <a href="#" target="_blank">Termos</a> e 
+                        <a href="#" target="_blank">Políticas de Privacidade</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="form-button">
+                    Criar conta <i class="fa-solid fa-user-plus"></i>
+                </button>
+            </form>
+
+            <div class="form-link">
+                <p>Já tem uma conta? <a href="login.html">Conecte-se</a></p>
+            </div>
+
+            <div class="form-link">
+                <a href="index.html">← Voltar ao início</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/api.js"></script>
+    
+    <script>
+        // Formatação de telefone
+        document.getElementById('registerPhone').addEventListener('input', (e) => {
+            e.target.value = Utils.formatPhone(e.target.value);
+        });
+
+        // Submit do formulário
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const nome = document.getElementById('registerName').value;
+            const telefone = document.getElementById('registerPhone').value;
+            const email = document.getElementById('registerEmail').value;
+            const senha = document.getElementById('registerPassword').value;
+            const confirmSenha = document.getElementById('registerConfirmPassword').value;
+            const acceptTerms = document.getElementById('acceptTerms').checked;
+
+            // Validações
+            if (!nome.trim()) {
+                Utils.showNotification('error', 'Nome é obrigatório');
+                return;
+            }
+
+            if (!Utils.validatePhone(telefone)) {
+                Utils.showNotification('error', 'Telefone inválido');
+                return;
+            }
+
+            if (!Utils.validateEmail(email)) {
+                Utils.showNotification('error', 'E-mail inválido');
+                return;
+            }
+
+            if (senha.length < 6) {
+                Utils.showNotification('error', 'Senha deve ter pelo menos 6 caracteres');
+                return;
+            }
+
+            if (senha !== confirmSenha) {
+                Utils.showNotification('error', 'Senhas não coincidem');
+                return;
+            }
+
+            if (!acceptTerms) {
+                Utils.showNotification('error', 'Você deve aceitar os termos');
+                return;
+            }
+
+            try {
+                await Auth.register({ nome, telefone, email, senha });
+                window.location.href = 'login.html';
+            } catch (error) {
+                // Erro já tratado no Auth.register
+            }
+        });
+    </script>
+</body>
+</html>
